@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>群聊</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;}
+body{display:flex;flex-direction:column;height:100vh;background:#f5f5f5;}
+#header{height:48px;background:#07c160;color:#fff;display:flex;align-items:center;justify-content:flex-end;padding:0 15px;font-size:16px;box-shadow:0 2px 4px rgba(0,0,0,.1);}
+#header span{margin-left:10px;}
+#renamePop{position:absolute;top:52px;right:12px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.15);padding:10px;display:none;z-index:999;}
+#renamePop input{width:140px;padding:6px 8px;font-size:14px;border:1px solid #ccc;border-radius:4px;}
+#renamePop button{margin-left:6px;padding:6px 10px;font-size:14px;border:none;border-radius:4px;background:#07c160;color:#fff;cursor:pointer;}
+#renamePop button.cancel{background:#999;margin-left:4px;}
+#box{flex:1;overflow-y:auto;padding:10px;}
+.msg{margin:8px 0;display:flex;}
+.msg.me{justify-content:flex-end;}
+
+/* 默认样式 - 消息框宽度自适应 */
+.msg .content{
+  display:inline-block;
+  max-width:90%;
+  text-align:left;
+}
+
+.msg.me .content{
+  text-align:right;
+}
+
+.msg .name{
+  font-size:12px;
+  color:#666;
+  margin:0 10px 4px;
+}
+
+.msg.me .name{
+  text-align:right;
+  color:#888;
+}
+
+.msg .bubble{
+  display:inline-block;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:15px;
+  line-height:1.45;
+  word-break:break-word;
+  white-space:pre-wrap;
+  text-align:justify;          /* 两端对齐 */
+  text-align-last:left;        /* 最后一行左对齐 */
+  width:auto;                  /* 宽度自适应内容 */
+  max-width:100%;              /* 最大宽度不超过容器 */
+  min-width: min-content;      /* 最小宽度根据内容调整 */
+}
+
+/* 不同屏幕尺寸的消息框适配 */
+@media screen and (min-width: 1200px) {
+  /* 大屏幕 (>=1200px) */
+  .msg .content {
+    max-width: 40%;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  /* 中等屏幕 (768px-1199px) */
+  .msg .content {
+    max-width: 50%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  /* 小屏幕 (<768px) */
+  .msg .content {
+    max-width: 80%;
+  }
+}
+
+.msg.others .bubble{
+  background:#fff;
+}
+
+.msg.me   .bubble{
+  background:#95ec69;
+  color:#000;
+}
+#footer{height:56px;border-top:1px solid #e5e5e5;display:flex;background:#fff;align-items:center;padding:0 10px;}
+#footer textarea{flex:1;border:none;padding:10px 15px;font-size:16px;outline:none;resize:none;line-height:1.4;background:#f8f8f8;border-radius:20px;margin:0 10px;}
+#footer button{height:40px;border:none;background:#07c160;color:#fff;font-size:16px;cursor:pointer;border-radius:20px;transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;}
+
+/* 发送按钮样式 */
+#sendBtn{
+  width:60px;
+  font-weight:500;
+  background:#07c160;
+}
+
+#sendBtn:hover{
+  background:#06ae56;
+  transform:scale(1.02);
+}
+
+#sendBtn:active{
+  transform:scale(0.98);
+}
+
+#sendBtn:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* 加号按钮样式 */
+#plusBtn {
+  width:40px;
+  height:40px;
+  border:none;
+  background:#f0f0f0;
+  font-size:20px;
+  color:#666;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  transition:all 0.2s ease;
+  margin:0 5px;
+}
+
+#plusBtn:hover {
+  background:#e0e0e0;
+  color:#07c160;
+  transform:scale(1.1);
+}
+
+#plusBtn:active {
+  transform:scale(0.95);
+}
+
+/* 功能按钮区域样式 */
+#functionPanel {
+  position:fixed;
+  bottom:56px;
+  left:0;
+  right:0;
+  background:#f9f9f9;
+  border-top:1px solid #e5e5e5;
+  padding:15px;
+  display:none;
+  flex-wrap:wrap;
+  gap:15px;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+  z-index:100;
+}
+
+.functionBtn {
+  width:60px;
+  height:60px;
+  border:none;
+  background:#fff;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:12px;
+  color:#333;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  transition:all 0.2s ease;
+}
+
+.functionBtn:hover {
+  background:#07c160;
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.functionBtn .icon {
+  font-size:20px;
+  margin-bottom:5px;
+}
+
+#imageInput {
+  display:none;
+}
+
+/* 移动端适配 */
+@media (max-width:400px){
+  #header,#footer{height:50px;}
+  #footer{padding:0 8px;}
+  #footer textarea{margin:0 5px;padding:8px 12px;}
+  #plusBtn,#sendBtn{width:36px;height:36px;font-size:14px;}
+  #plusBtn{margin:0 3px;}
+}
+
+/* 图片消息样式 */
+.msg .image-bubble {
+  max-width: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.msg .image-bubble img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width:400px){#header,#footer{height:50px;}}
+</style>
+</head>
+<body>
+<div id="header">
+  <span id="myName">User85e3</span>
+  <span id="userIcon">👤</span>
+</div>
+
+<div id="renamePop">
+  <input id="newName" maxlength="12" placeholder="新昵称">
+  <button id="saveName">保存</button>
+  <button class="cancel" id="cancelName">取消</button>
+</div>
+
+<div id="box"></div>
+
+<!-- 功能按钮区域 -->
+<div id="functionPanel">
+  <button class="functionBtn" id="imageBtn">
+    <span class="icon">🖼️</span>
+    <span>图片</span>
+  </button>
+  <!-- 可以在这里添加更多功能按钮 -->
+</div>
+
+<div id="footer">
+  <textarea id="txt" rows="1" placeholder="说点什么…"></textarea>
+  <button id="plusBtn">➕</button>
+  <button id="sendBtn">发送</button>
+</div>
+
+<!-- 隐藏的文件输入框 -->
+<input type="file" id="imageInput" accept="image/*">
+
+<script>
+const uid = 'u6919b581685e3';
+const color = '#EC4F66';
+let last = 0;
+const renderedIds = new Set();
+const pendingSet = new Set();
+
+const box = document.getElementById('box');
+const txt = document.getElementById('txt');
+const sendBtn = document.getElementById('sendBtn');
+const myNameSpan = document.getElementById('myName');
+const userIcon = document.getElementById('userIcon');
+const renamePop = document.getElementById('renamePop');
+const newNameInput = document.getElementById('newName');
+const saveNameBtn = document.getElementById('saveName');
+const cancelNameBtn = document.getElementById('cancelName');
+
+// 新增元素
+const plusBtn = document.getElementById('plusBtn');
+const functionPanel = document.getElementById('functionPanel');
+const imageBtn = document.getElementById('imageBtn');
+const imageInput = document.getElementById('imageInput');
+
+userIcon.onclick = () => {
+  renamePop.style.display = renamePop.style.display === 'block' ? 'none' : 'block';
+  newNameInput.value = myNameSpan.textContent;
+  newNameInput.focus();
+};
+cancelNameBtn.onclick = () => renamePop.style.display = 'none';
+
+saveNameBtn.onclick = () => {
+  const nn = newNameInput.value.trim();
+  if (!nn) return alert('昵称不能为空');
+  fetch('api.php', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'act=rename&uid=' + uid + '&name=' + encodeURIComponent(nn)
+  }).then(r => r.json())
+    .then(res => {
+      if (res.ok) {
+        myNameSpan.textContent = nn;
+        renamePop.style.display = 'none';
+      } else {
+        alert(res.err || '修改失败');
+      }
+  });
+};
+
+// 功能按钮交互逻辑
+plusBtn.onclick = () => {
+  const isVisible = functionPanel.style.display === 'flex';
+  if (!isVisible) {
+    functionPanel.style.display = 'flex';
+    // 滚动到页面底部以显示功能面板
+    window.scrollTo(0, document.body.scrollHeight);
+  } else {
+    functionPanel.style.display = 'none';
+  }
+};
+
+// 图片按钮点击事件
+imageBtn.onclick = () => {
+  imageInput.click();
+};
+
+// 图片选择事件
+imageInput.onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  if (!file.type.startsWith('image/')) {
+    alert('请选择图片文件');
+    return;
+  }
+  
+  // 检查文件大小（限制为5MB）
+  if (file.size > 5 * 1024 * 1024) {
+    alert('图片大小不能超过5MB');
+    return;
+  }
+  
+  // 上传图片
+  uploadImage(file);
+};
+
+// 上传图片函数
+function uploadImage(file) {
+  const formData = new FormData();
+  formData.append('act', 'uploadImage');
+  formData.append('uid', uid);
+  formData.append('name', myNameSpan.textContent);
+  formData.append('color', color);
+  formData.append('image', file);
+  
+  // 生成临时的唯一标识，用于pendingSet检测
+  const tempId = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  const sig = uid + '|' + tempId;
+  pendingSet.add(sig);
+  
+  fetch('api.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      // 移除pending标识
+      pendingSet.delete(sig);
+      
+      // 显示图片消息（包含消息ID）
+      appendImageMessage(data.imageUrl, data.imageName, data.msgId);
+      // 隐藏功能面板
+      functionPanel.style.display = 'none';
+      // 清空文件输入
+      imageInput.value = '';
+      // 立即更新last ID，避免轮询重复拉取
+      if (data.msgId) {
+        last = Math.max(last, data.msgId);
+        renderedIds.add(data.msgId);
+      }
+    } else {
+      // 上传失败时也要移除pending标识
+      pendingSet.delete(sig);
+      alert(data.err || '图片上传失败');
+    }
+  })
+  .catch(err => {
+    // 网络错误时也要移除pending标识
+    pendingSet.delete(sig);
+    console.error('上传错误:', err);
+    alert('上传失败，请重试');
+  });
+}
+
+// 添加图片消息到聊天框（包含消息ID）
+function appendImageMessage(imageUrl, imageName, msgId) {
+  // 检查是否已经渲染过
+  if (msgId && renderedIds.has(msgId)) {
+    console.log('图片消息已存在，跳过渲染:', msgId);
+    return;
+  }
+  
+  const div = document.createElement('div');
+  div.className = 'msg me';
+  
+  // 如果有消息ID，添加到已渲染集合
+  if (msgId) {
+    renderedIds.add(msgId);
+  }
+  
+  div.innerHTML = `
+    <div class="content">
+      <div class="name">${myNameSpan.textContent}</div>
+      <div class="image-bubble">
+        <img src="http://10.0.0.1:8080/ChatRoom/${imageUrl}" alt="${imageName}" onerror="this.style.display='none';this.parentElement.innerHTML='图片加载失败'">
+      </div>
+    </div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+// 修改appendMessage函数以支持图片消息
+function appendMessage(m) {
+  // 首先检查消息ID是否已存在
+  if (m.id && renderedIds.has(m.id)) {
+    console.log('消息已存在，跳过渲染:', m.id);
+    return;
+  }
+  
+  // 如果是图片消息，检查pending状态
+  if (m.txt && m.txt.includes('image:')) {
+    // 为图片消息生成一个临时的pending标识
+    const imgSig = m.uid + '|img_' + m.id;
+    if (pendingSet.has(imgSig)) {
+      console.log('图片消息正在处理中，跳过渲染:', m.id);
+      return;
+    }
+  }
+  
+  // 检查文本消息的pending状态
+  const sig = m.uid + '|' + m.txt;
+  if (pendingSet.has(sig)) {
+    pendingSet.delete(sig);
+    return;
+  }
+
+  // 添加到已渲染集合
+  if (m.id) {
+    renderedIds.add(m.id);
+  }
+
+  const div = document.createElement('div');
+  div.className = m.uid === uid ? 'msg me' : 'msg others';
+  
+  // 判断是否为图片消息
+  if (m.txt && m.txt.includes('image:')) {
+    const imageUrl = m.txt.replace('image:', '');
+    div.innerHTML = `
+      <div class="content">
+        <div class="name">${m.name}</div>
+        <div class="image-bubble">
+          <img src="http://10.0.0.1:8080/ChatRoom/${imageUrl}" alt="图片" onerror="this.style.display='none';this.parentElement.innerHTML='图片加载失败'">
+        </div>
+      </div>`;
+  } else {
+    div.innerHTML = `
+      <div class="content">
+        <div class="name">${m.name}</div>
+        <div class="bubble">${m.txt.replace(/<br>/g,'<br style="display:block;text-align:left">')}</div>
+      </div>`;
+  }
+  
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  
+  // 更新last ID
+  if (m.id) {
+    last = Math.max(last, m.id);
+  }
+}
+
+// 文本消息发送函数
+sendBtn.onclick = () => {
+  const v = txt.value.trim();
+  if (!v) return;
+  const msg = v.replace(/\r?\n/g, '<br>');
+  txt.value = '';
+
+  // 检查是否为clear命令
+  if (v.toLowerCase() === 'clear') {
+    // 清空所有消息记录
+    clearAllMessages();
+    return;
+  }
+
+  // 先添加到pendingSet
+  const sig = uid + '|' + msg;
+  pendingSet.add(sig);
+
+  // 立即显示消息
+  appendMessage({uid: uid, name: myNameSpan.textContent, txt: msg});
+
+  // 发送到服务器
+  fetch('api.php', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'act=send&uid=' + uid +
+          '&name=' + encodeURIComponent(myNameSpan.textContent) +
+          '&color=' + encodeURIComponent(color) +
+          '&msg=' + encodeURIComponent(msg)
+  }).then(r => r.json())
+    .then(data => {
+      // 发送成功后，pendingSet会在appendMessage中处理
+      if (!data.ok) {
+        // 如果发送失败，移除pending标识
+        pendingSet.delete(sig);
+      }
+    })
+    .catch(err => {
+      // 网络错误时移除pending标识
+      pendingSet.delete(sig);
+      console.error('发送错误:', err);
+    });
+
+  txt.focus();
+};
+
+// 清空所有消息记录函数
+function clearAllMessages() {
+  // 先清空聊天框
+  box.innerHTML = '';
+  
+  // 清空本地状态
+  renderedIds.clear();
+  pendingSet.clear();
+  last = 0;
+  
+  // 发送清空请求到服务器
+  fetch('api.php', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'act=clear&uid=' + uid
+  }).then(r => r.json())
+    .then(data => {
+      if (data.ok) {
+        console.log('消息记录已清空');
+      } else {
+        alert('清空失败: ' + (data.err || '未知错误'));
+        // 如果清空失败，重新拉取消息
+        pullMessages();
+      }
+    })
+    .catch(err => {
+      console.error('清空错误:', err);
+      alert('清空失败，请重试');
+      // 如果清空失败，重新拉取消息
+      pullMessages();
+    });
+}
+
+// 轮询函数 - 添加错误处理和更严格的重复检测
+function pullMessages() {
+  fetch('api.php?act=pull&last=' + last)
+    .then(r => r.json())
+    .then(data => {
+      if (data.msgs && data.msgs.length) {
+        // 过滤掉已经渲染过的消息
+        const newMessages = data.msgs.filter(m => !renderedIds.has(m.id));
+        
+        if (newMessages.length > 0) {
+          console.log('拉取到新消息:', newMessages.length);
+          newMessages.forEach(m => appendMessage(m));
+        }
+      }
+    })
+    .catch(err => {
+      console.error('轮询错误:', err);
+    });
+}
+
+// 使用更稳定的轮询机制
+setInterval(pullMessages, 1500);
+
+// 页面加载时立即拉取一次消息
+setTimeout(pullMessages, 100);
+
+// 检测设备类型并启用回车键发送功能
+function isDesktopDevice() {
+  // 检测屏幕宽度和用户代理来判断是否为电脑设备
+  const isLargeScreen = window.innerWidth >= 768; // 中等屏幕及以上
+  const isDesktopUA = !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  return isLargeScreen && isDesktopUA;
+}
+
+// 回车键发送消息功能
+function handleEnterKey(event) {
+  // 检查是否为回车键（Enter键）
+  if (event.key === 'Enter') {
+    // 检查是否同时按下了Ctrl或Shift键（用于换行）
+    if (event.ctrlKey || event.shiftKey) {
+      // 如果按下了Ctrl+Enter或Shift+Enter，插入换行符
+      const start = txt.selectionStart;
+      const end = txt.selectionEnd;
+      const value = txt.value;
+      
+      // 在光标位置插入换行符
+      txt.value = value.substring(0, start) + '\n' + value.substring(end);
+      
+      // 设置光标位置
+      txt.selectionStart = txt.selectionEnd = start + 1;
+      
+      // 阻止默认行为（不发送消息）
+      event.preventDefault();
+    } else {
+      // 如果只按下了Enter键，发送消息
+      event.preventDefault(); // 阻止默认的换行行为
+      sendBtn.click(); // 触发发送按钮的点击事件
+    }
+  }
+}
+
+// 初始化回车键功能
+function initEnterKeyFeature() {
+  if (isDesktopDevice()) {
+    console.log('检测到电脑设备，已启用回车键发送消息功能');
+    console.log('使用说明：');
+    console.log('- 按 Enter 键：发送消息');
+    console.log('- 按 Ctrl+Enter 或 Shift+Enter：插入换行符');
+    
+    // 添加回车键事件监听器
+    txt.addEventListener('keydown', handleEnterKey);
+    
+    // 添加提示信息到页面
+    const enterHint = document.createElement('div');
+    enterHint.style.cssText = 'text-align: center; font-size: 12px; color: #666; margin-top: 5px;';
+    enterHint.textContent = '提示：按 Enter 发送消息，Ctrl+Enter 换行';
+    
+    // 将提示信息插入到发送框附近
+    const footer = document.querySelector('.footer');
+    if (footer) {
+      footer.appendChild(enterHint);
+    }
+  } else {
+    console.log('检测到移动设备，禁用回车键发送消息功能');
+  }
+}
+
+// 页面加载完成后初始化回车键功能
+document.addEventListener('DOMContentLoaded', function() {
+  // 等待DOM完全加载后初始化
+  setTimeout(initEnterKeyFeature, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2242 @@
+    <!DOCTYPE html>
+    <html data-bs-theme="light">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Web based File Manager in PHP, Manage your files efficiently and easily with Tiny File Manager">
+        <meta name="author" content="CCP Programmers">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="googlebot" content="noindex">
+                <title>在线文件夹 | 🙂</title>
+        <!-- EXTERNAL: MISSING KEY pre-jsdelivr -->        <!-- EXTERNAL: MISSING KEY pre-cloudflare -->        <link href="http://10.0.0.1:8080/FileShare/cssjs/bootstrap.min.css" rel="stylesheet">        <link rel="stylesheet" href="http://10.0.0.1:8080/FileShare/cssjs/font-awesome.min.css">                <script type="text/javascript">
+            window.csrf = 'e5429cef7145313915bd077aa15c07a422c77b26ca34de82fbdb13d2258fef5c';
+        </script>
+        <style>
+            html {
+                -moz-osx-font-smoothing: grayscale;
+                -webkit-font-smoothing: antialiased;
+                text-rendering: optimizeLegibility;
+                height: 100%;
+                scroll-behavior: smooth;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-size: 15px;
+                color: #222;
+                background: #F7F7F7;
+            }
+
+            body.navbar-fixed {
+                margin-top: 55px;
+            }
+
+            a,
+            a:hover,
+            a:visited,
+            a:focus {
+                text-decoration: none !important;
+            }
+
+            .filename,
+            td,
+            th {
+                white-space: nowrap
+            }
+
+            .navbar-brand {
+                font-weight: bold;
+            }
+
+            .nav-item.avatar a {
+                cursor: pointer;
+                text-transform: capitalize;
+            }
+
+            .nav-item.avatar a>i {
+                font-size: 15px;
+            }
+
+            .nav-item.avatar .dropdown-menu a {
+                font-size: 13px;
+            }
+
+            #search-addon {
+                font-size: 12px;
+                border-right-width: 0;
+            }
+
+            .brl-0 {
+                background: transparent;
+                border-left: 0;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .brr-0 {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .bread-crumb {
+                color: #cccccc;
+                font-style: normal;
+            }
+
+            #main-table {
+                transition: transform .25s cubic-bezier(0.4, 0.5, 0, 1), width 0s .25s;
+            }
+
+            #main-table .filename a {
+                color: #222222;
+            }
+
+            .table td,
+            .table th {
+                vertical-align: middle !important;
+            }
+
+            .table .custom-checkbox-td .custom-control.custom-checkbox,
+            .table .custom-checkbox-header .custom-control.custom-checkbox {
+                min-width: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .table-sm td,
+            .table-sm th {
+                padding: .4rem;
+            }
+
+            .table-bordered td,
+            .table-bordered th {
+                border: 1px solid #f1f1f1;
+            }
+
+            .hidden {
+                display: none
+            }
+
+            pre.with-hljs {
+                padding: 0;
+                overflow: hidden;
+            }
+
+            pre.with-hljs code {
+                margin: 0;
+                border: 0;
+                overflow: scroll;
+            }
+
+            code.maxheight,
+            pre.maxheight {
+                max-height: 512px
+            }
+
+            .fa.fa-caret-right {
+                font-size: 1.2em;
+                margin: 0 4px;
+                vertical-align: middle;
+                color: #ececec
+            }
+
+            .fa.fa-home {
+                font-size: 1.3em;
+                vertical-align: bottom
+            }
+
+            .path {
+                margin-bottom: 10px
+            }
+
+            form.dropzone {
+                min-height: 200px;
+                border: 2px dashed #007bff;
+                line-height: 6rem;
+            }
+
+            .right {
+                text-align: right
+            }
+
+            .center,
+            .close,
+            .login-form,
+            .preview-img-container {
+                text-align: center
+            }
+
+            .message {
+                padding: 4px 7px;
+                border: 1px solid #ddd;
+                background-color: #fff
+            }
+
+            .message.ok {
+                border-color: green;
+                color: green
+            }
+
+            .message.error {
+                border-color: red;
+                color: red
+            }
+
+            .message.alert {
+                border-color: orange;
+                color: orange
+            }
+
+            .preview-img {
+                max-width: 100%;
+                max-height: 80vh;
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAKklEQVR42mL5//8/Azbw+PFjrOJMDCSCUQ3EABZc4S0rKzsaSvTTABBgAMyfCMsY4B9iAAAAAElFTkSuQmCC);
+                cursor: zoom-in
+            }
+
+            input#preview-img-zoomCheck[type=checkbox] {
+                display: none
+            }
+
+            input#preview-img-zoomCheck[type=checkbox]:checked~label>img {
+                max-width: none;
+                max-height: none;
+                cursor: zoom-out
+            }
+
+            .inline-actions>a>i {
+                font-size: 1em;
+                margin-left: 5px;
+                background: #3785c1;
+                color: #fff;
+                padding: 3px 4px;
+                border-radius: 3px;
+            }
+
+            .preview-video {
+                position: relative;
+                max-width: 100%;
+                height: 0;
+                padding-bottom: 62.5%;
+                margin-bottom: 10px
+            }
+
+            .preview-video video {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                background: #000
+            }
+
+            .compact-table {
+                border: 0;
+                width: auto
+            }
+
+            .compact-table td,
+            .compact-table th {
+                width: 100px;
+                border: 0;
+                text-align: center
+            }
+
+            .compact-table tr:hover td {
+                background-color: #fff
+            }
+
+            .filename {
+                max-width: 420px;
+                overflow: hidden;
+                text-overflow: ellipsis
+            }
+
+            .break-word {
+                word-wrap: break-word;
+                margin-left: 30px
+            }
+
+            .break-word.float-left a {
+                color: #7d7d7d
+            }
+
+            .break-word+.float-right {
+                padding-right: 30px;
+                position: relative
+            }
+
+            .break-word+.float-right>a {
+                color: #7d7d7d;
+                font-size: 1.2em;
+                margin-right: 4px
+            }
+
+            #editor {
+                position: absolute;
+                right: 15px;
+                top: 100px;
+                bottom: 15px;
+                left: 15px
+            }
+
+            @media (max-width:481px) {
+                #editor {
+                    top: 150px;
+                }
+            }
+
+            #normal-editor {
+                border-radius: 3px;
+                border-width: 2px;
+                padding: 10px;
+                outline: none;
+            }
+
+            .btn-2 {
+                padding: 4px 10px;
+                font-size: small;
+            }
+
+            li.file:before,
+            li.folder:before {
+                font: normal normal normal 14px/1 FontAwesome;
+                content: "\f016";
+                margin-right: 5px
+            }
+
+            li.folder:before {
+                content: "\f114"
+            }
+
+            i.fa.fa-folder-o {
+                color: #0157b3
+            }
+
+            i.fa.fa-picture-o {
+                color: #26b99a
+            }
+
+            i.fa.fa-file-archive-o {
+                color: #da7d7d
+            }
+
+            .btn-2 i.fa.fa-file-archive-o {
+                color: inherit
+            }
+
+            i.fa.fa-css3 {
+                color: #f36fa0
+            }
+
+            i.fa.fa-file-code-o {
+                color: #007bff
+            }
+
+            i.fa.fa-code {
+                color: #cc4b4c
+            }
+
+            i.fa.fa-file-text-o {
+                color: #0096e6
+            }
+
+            i.fa.fa-html5 {
+                color: #d75e72
+            }
+
+            i.fa.fa-file-excel-o {
+                color: #09c55d
+            }
+
+            i.fa.fa-file-powerpoint-o {
+                color: #f6712e
+            }
+
+            i.go-back {
+                font-size: 1.2em;
+                color: #007bff;
+            }
+
+            .main-nav {
+                padding: 0.2rem 1rem;
+                box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2)
+            }
+
+            .dataTables_filter {
+                display: none;
+            }
+
+            table.dataTable thead .sorting {
+                cursor: pointer;
+                background-repeat: no-repeat;
+                background-position: center right;
+                background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAkElEQVQoz7XQMQ5AQBCF4dWQSJxC5wwax1Cq1e7BAdxD5SL+Tq/QCM1oNiJidwox0355mXnG/DrEtIQ6azioNZQxI0ykPhTQIwhCR+BmBYtlK7kLJYwWCcJA9M4qdrZrd8pPjZWPtOqdRQy320YSV17OatFC4euts6z39GYMKRPCTKY9UnPQ6P+GtMRfGtPnBCiqhAeJPmkqAAAAAElFTkSuQmCC');
+            }
+
+            table.dataTable thead .sorting_asc {
+                cursor: pointer;
+                background-repeat: no-repeat;
+                background-position: center right;
+                background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZ0lEQVQ4y2NgGLKgquEuFxBPAGI2ahhWCsS/gDibUoO0gPgxEP8H4ttArEyuQYxAPBdqEAxPBImTY5gjEL9DM+wTENuQahAvEO9DMwiGdwAxOymGJQLxTyD+jgWDxCMZRsEoGAVoAADeemwtPcZI2wAAAABJRU5ErkJggg==');
+            }
+
+            table.dataTable thead .sorting_desc {
+                cursor: pointer;
+                background-repeat: no-repeat;
+                background-position: center right;
+                background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZUlEQVQ4y2NgGAWjYBSggaqGu5FA/BOIv2PBIPFEUgxjB+IdQPwfC94HxLykus4GiD+hGfQOiB3J8SojEE9EM2wuSJzcsFMG4ttQgx4DsRalkZENxL+AuJQaMcsGxBOAmGvopk8AVz1sLZgg0bsAAAAASUVORK5CYII=');
+            }
+
+            table.dataTable thead tr:first-child th.custom-checkbox-header:first-child {
+                background-image: none;
+            }
+
+            .footer-action li {
+                margin-bottom: 10px;
+            }
+
+            .app-v-title {
+                font-size: 24px;
+                font-weight: 300;
+                letter-spacing: -.5px;
+                text-transform: uppercase;
+            }
+
+            hr.custom-hr {
+                border-top: 1px dashed #8c8b8b;
+                border-bottom: 1px dashed #fff;
+            }
+
+            #snackbar {
+                visibility: hidden;
+                min-width: 250px;
+                margin-left: -125px;
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                border-radius: 2px;
+                padding: 16px;
+                position: fixed;
+                z-index: 1;
+                left: 50%;
+                bottom: 30px;
+                font-size: 17px;
+            }
+
+            #snackbar.show {
+                visibility: visible;
+                -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+                animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            }
+
+            @-webkit-keyframes fadein {
+                from {
+                    bottom: 0;
+                    opacity: 0;
+                }
+
+                to {
+                    bottom: 30px;
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadein {
+                from {
+                    bottom: 0;
+                    opacity: 0;
+                }
+
+                to {
+                    bottom: 30px;
+                    opacity: 1;
+                }
+            }
+
+            @-webkit-keyframes fadeout {
+                from {
+                    bottom: 30px;
+                    opacity: 1;
+                }
+
+                to {
+                    bottom: 0;
+                    opacity: 0;
+                }
+            }
+
+            @keyframes fadeout {
+                from {
+                    bottom: 30px;
+                    opacity: 1;
+                }
+
+                to {
+                    bottom: 0;
+                    opacity: 0;
+                }
+            }
+
+            #main-table span.badge {
+                border-bottom: 2px solid #f8f9fa
+            }
+
+            #main-table span.badge:nth-child(1) {
+                border-color: #df4227
+            }
+
+            #main-table span.badge:nth-child(2) {
+                border-color: #f8b600
+            }
+
+            #main-table span.badge:nth-child(3) {
+                border-color: #00bd60
+            }
+
+            #main-table span.badge:nth-child(4) {
+                border-color: #4581ff
+            }
+
+            #main-table span.badge:nth-child(5) {
+                border-color: #ac68fc
+            }
+
+            #main-table span.badge:nth-child(6) {
+                border-color: #45c3d2
+            }
+
+            @media only screen and (min-device-width:768px) and (max-device-width:1024px) and (orientation:landscape) and (-webkit-min-device-pixel-ratio:2) {
+                .navbar-collapse .col-xs-6 {
+                    padding: 0;
+                }
+            }
+
+            .btn.active.focus,
+            .btn.active:focus,
+            .btn.focus,
+            .btn.focus:active,
+            .btn:active:focus,
+            .btn:focus {
+                outline: 0 !important;
+                outline-offset: 0 !important;
+                background-image: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important
+            }
+
+            .lds-facebook {
+                display: none;
+                position: relative;
+                width: 64px;
+                height: 64px
+            }
+
+            .lds-facebook div,
+            .lds-facebook.show-me {
+                display: inline-block
+            }
+
+            .lds-facebook div {
+                position: absolute;
+                left: 6px;
+                width: 13px;
+                background: #007bff;
+                animation: lds-facebook 1.2s cubic-bezier(0, .5, .5, 1) infinite
+            }
+
+            .lds-facebook div:nth-child(1) {
+                left: 6px;
+                animation-delay: -.24s
+            }
+
+            .lds-facebook div:nth-child(2) {
+                left: 26px;
+                animation-delay: -.12s
+            }
+
+            .lds-facebook div:nth-child(3) {
+                left: 45px;
+                animation-delay: 0s
+            }
+
+            @keyframes lds-facebook {
+                0% {
+                    top: 6px;
+                    height: 51px
+                }
+
+                100%,
+                50% {
+                    top: 19px;
+                    height: 26px
+                }
+            }
+
+            ul#search-wrapper {
+                padding-left: 0;
+                border: 1px solid #ecececcc;
+            }
+
+            ul#search-wrapper li {
+                list-style: none;
+                padding: 5px;
+                border-bottom: 1px solid #ecececcc;
+            }
+
+            ul#search-wrapper li:nth-child(odd) {
+                background: #f9f9f9cc;
+            }
+
+            .c-preview-img {
+                max-width: 300px;
+            }
+
+            .border-radius-0 {
+                border-radius: 0;
+            }
+
+            .float-right {
+                float: right;
+            }
+
+            .table-hover>tbody>tr:hover>td:first-child {
+                border-left: 1px solid #1b77fd;
+            }
+
+            #main-table tr.even {
+                background-color: #F8F9Fa;
+            }
+
+            .filename>a>i {
+                margin-right: 3px;
+            }
+
+            .fs-7 {
+                font-size: 14px;
+            }
+        </style>
+            </head>
+
+    <body class=" navbar-fixed">
+        <div id="wrapper" class="container-fluid">
+            <!-- New Item creation -->
+            <div class="modal fade" id="createNewItem" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="newItemModalLabel" aria-hidden="true" data-bs-theme="light">
+                <div class="modal-dialog" role="document">
+                    <form class="modal-content" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="newItemModalLabel"><i class="fa fa-plus-square fa-fw"></i>创建新文件</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><label for="newfile">文件类型 </label></p>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="newfile" id="customRadioInline1" name="newfile" value="file">
+                                <label class="form-check-label" for="customRadioInline1">文件</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="newfile" id="customRadioInline2" value="folder" checked>
+                                <label class="form-check-label" for="customRadioInline2">文件夹</label>
+                            </div>
+
+                            <p class="mt-3"><label for="newfilename">创建名称 </label></p>
+                            <input type="text" name="newfilename" id="newfilename" value="" class="form-control" placeholder="Enter here..." required>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="token" value="e5429cef7145313915bd077aa15c07a422c77b26ca34de82fbdb13d2258fef5c">
+                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> 取消</button>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-check-circle"></i> 创建</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Advance Search Modal -->
+            <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true" data-bs-theme="light">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title col-10" id="searchModalLabel">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="查找 a files" aria-label="查找" aria-describedby="search-addon3" id="advanced-search" autofocus required>
+                                    <span class="input-group-text" id="search-addon3"><i class="fa fa-search"></i></span>
+                                </div>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="FileShare.html" method="post">
+                                <div class="lds-facebook">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <ul id="search-wrapper">
+                                    <p class="m-2">在文件夹和子文件夹中搜索文件…</p>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Rename Modal -->
+            <div class="modal modal-alert" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="renameDailog" data-bs-theme="light">
+                <div class="modal-dialog" role="document">
+                    <form class="modal-content rounded-3 shadow" method="post" autocomplete="off">
+                        <div class="modal-body p-4 text-center">
+                            <h5 class="mb-3">是否确实要重命名?</h5>
+                            <p class="mb-1">
+                                <input type="text" name="rename_to" id="js-rename-to" class="form-control" placeholder="Enter new file name" required>
+                                <input type="hidden" name="token" value="e5429cef7145313915bd077aa15c07a422c77b26ca34de82fbdb13d2258fef5c">
+                                <input type="hidden" name="rename_from" id="js-rename-from">
+                            </p>
+                        </div>
+                        <div class="modal-footer flex-nowrap p-0">
+                            <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-end" data-bs-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0"><strong>确定</strong></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Confirm Modal -->
+            <script type="text/html" id="js-tpl-confirm">
+                <div class="modal modal-alert confirmDailog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="confirmDailog-<%this.id%>" data-bs-theme="light">
+                    <div class="modal-dialog" role="document">
+                        <form class="modal-content rounded-3 shadow" method="post" autocomplete="off" action="http://10.0.0.1:8080/FileShare/&lt;%this.action%&gt;">
+                            <div class="modal-body p-4 text-center">
+                                <h5 class="mb-2">你确定要 <%this.title%> ?</h5>
+                                <p class="mb-1"><%this.content%></p>
+                            </div>
+                            <div class="modal-footer flex-nowrap p-0">
+                                <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-end" data-bs-dismiss="modal">取消</button>
+                                <input type="hidden" name="token" value="e5429cef7145313915bd077aa15c07a422c77b26ca34de82fbdb13d2258fef5c">
+                                <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal"><strong>确定</strong></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </script>
+            <nav class="navbar navbar-expand-lg mb-4 main-nav fixed-top bg-body-tertiary" data-bs-theme="light">
+        <a class="navbar-brand" href="FileShare.html">文件管理器</a>
+        <a class="navbar-brand" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;upload">上传</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <div class="col-xs-6 col-sm-5"><a href='FileShare.html'><i class='fa fa-home' aria-hidden='true' title='/home/allinone/FileShare/file'></i></a></div>
+            <div class="col-xs-6 col-sm-7">
+                <ul class="navbar-nav justify-content-end" data-bs-theme="light">
+                    <li class="nav-item mr-2">
+                        <div class="input-group input-group-sm mr-1" style="margin-top:4px;">
+                            <input type="text" class="form-control" placeholder="查找" aria-label="查找" aria-describedby="search-addon2" id="search-addon">
+                            <div class="input-group-append">
+                                <span class="input-group-text brl-0 brr-0" id="search-addon2"><i class="fa fa-search"></i></span>
+                            </div>
+                            <div class="input-group-append btn-group">
+                                <span class="input-group-text dropdown-toggle brl-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="http://10.0.0.1:8080/FileShare/" id="js-search-modal" data-bs-toggle="modal" data-bs-target="#searchModal">高级搜索</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                                            <li class="nav-item">
+                            <a title="上传" class="nav-link" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;upload"><i class="fa fa-cloud-upload" aria-hidden="true"></i> 上传</a>
+                        </li>
+                        <li class="nav-item">
+                            <a title="创建新文件/文件夹" class="nav-link" href="FileShare.html#createNewItem" data-bs-toggle="modal" data-bs-target="#createNewItem"><i class="fa fa-plus-square"></i> 创建新文件/文件夹</a>
+                        </li>
+                                                                                            <li class="nav-item">
+                                <a title="设置" class="dropdown-item nav-link" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;settings=1"><i class="fa fa-cog" aria-hidden="true"></i> 设置</a>
+                            </li>
+                                                            </ul>
+            </div>
+        </div>
+    </nav>
+<form action="FileShare.html" method="post" class="pt-3">
+    <input type="hidden" name="p" value="">
+    <input type="hidden" name="group" value="1">
+    <input type="hidden" name="token" value="e5429cef7145313915bd077aa15c07a422c77b26ca34de82fbdb13d2258fef5c">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-sm" id="main-table" data-bs-theme="light">
+            <thead class="thead-white">
+                <tr>
+                                            <th style="width:3%" class="custom-checkbox-header">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="js-select-all-items" onclick="checkbox_toggle()">
+                                <label class="custom-control-label" for="js-select-all-items"></label>
+                            </div>
+                        </th>                    <th>文件名</th>
+                    <th>大小</th>
+                    <th>修改时间</th>
+                                        <th>执行操作</th>
+                </tr>
+            </thead>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="3399" name="file[]" value="模块">
+                                <label class="custom-control-label" for="3399"></label>
+                            </div>
+                        </td>
+                                        <td data-sort=模块>
+                        <div class="filename">
+                            <a href="http://10.0.0.1:8080/FileShare/index.php?p=%E6%A8%A1%E5%9D%97"><i class="fa fa-folder-o"></i> 模块</a>
+                                                    </div>
+                    </td>
+                    <td data-order="a-000000000000000000">
+                        文件夹                    </td>
+                    <td data-order="a-1762408876">11/06/2025 2:01 PM</td>
+                                        <td class="inline-actions">                            <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E6%A8%A1%E5%9D%97" onclick="confirmDailog(event, '1028','删除 文件夹','%E6%A8%A1%E5%9D%97', this.href);"> <i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '模块');return false;"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                            <a title="复制到..." href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E6%A8%A1%E5%9D%97"><i class="fa fa-files-o" aria-hidden="true"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/模块/" target="_blank"><i class="fa fa-link" aria-hidden="true"></i></a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8002" name="file[]" value="android-hid-client-v3.0.1.apk">
+                                <label class="custom-control-label" for="8002"></label>
+                            </div>
+                        </td>                    <td data-sort=android-hid-client-v3.0.1.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=android-hid-client-v3.0.1.apk" title="android-hid-client-v3.0.1.apk">
+                                                                        <i class="fa fa-info-circle"></i> android-hid-client-v3.0.1.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002549107"><span title="2549107 bytes">
+                            2.43 MB                        </span></td>
+                    <td data-order="b-1762843833">11/11/2025 2:50 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=android-hid-client-v3.0.1.apk" onclick="confirmDailog(event, 1209, '删除 文件','android-hid-client-v3.0.1.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'android-hid-client-v3.0.1.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=android-hid-client-v3.0.1.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/android-hid-client-v3.0.1.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=android-hid-client-v3.0.1.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8003" name="file[]" value="app-release.apk">
+                                <label class="custom-control-label" for="8003"></label>
+                            </div>
+                        </td>                    <td data-sort=app-release.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=app-release.apk" title="app-release.apk">
+                                                                        <i class="fa fa-info-circle"></i> app-release.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002227107"><span title="2227107 bytes">
+                            2.12 MB                        </span></td>
+                    <td data-order="b-1762843203">11/11/2025 2:40 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=app-release.apk" onclick="confirmDailog(event, 1209, '删除 文件','app-release.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'app-release.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=app-release.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/app-release.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=app-release.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8004" name="file[]" value="AAAAA.zip">
+                                <label class="custom-control-label" for="8004"></label>
+                            </div>
+                        </td>                    <td data-sort=AAAAA.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=AAAAA.zip" title="AAAAA.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> AAAAA.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000266180238"><span title="266180238 bytes">
+                            253.85 MB                        </span></td>
+                    <td data-order="b-1762748039">11/10/2025 12:13 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=AAAAA.zip" onclick="confirmDailog(event, 1209, '删除 文件','AAAAA.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'AAAAA.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=AAAAA.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/AAAAA.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=AAAAA.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8005" name="file[]" value="Android_HID_Keyboard-v1.5.2.apk">
+                                <label class="custom-control-label" for="8005"></label>
+                            </div>
+                        </td>                    <td data-sort=Android_HID_Keyboard-v1.5.2.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Android_HID_Keyboard-v1.5.2.apk" title="Android_HID_Keyboard-v1.5.2.apk">
+                                                                        <i class="fa fa-info-circle"></i> Android_HID_Keyboard-v1.5.2.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000004560403"><span title="4560403 bytes">
+                            4.35 MB                        </span></td>
+                    <td data-order="b-1762668757">11/09/2025 2:12 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Android_HID_Keyboard-v1.5.2.apk" onclick="confirmDailog(event, 1209, '删除 文件','Android_HID_Keyboard-v1.5.2.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Android_HID_Keyboard-v1.5.2.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Android_HID_Keyboard-v1.5.2.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Android_HID_Keyboard-v1.5.2.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Android_HID_Keyboard-v1.5.2.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8006" name="file[]" value="葫芦娃[HP]4.6.sh">
+                                <label class="custom-control-label" for="8006"></label>
+                            </div>
+                        </td>                    <td data-sort=葫芦娃[HP]4.6.sh>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.6.sh" title="葫芦娃[HP]4.6.sh">
+                                                                        <i class="fa fa-file-code-o"></i> 葫芦娃[HP]4.6.sh                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002532678"><span title="2532678 bytes">
+                            2.42 MB                        </span></td>
+                    <td data-order="b-1762522009">11/07/2025 9:26 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.6.sh" onclick="confirmDailog(event, 1209, '删除 文件','%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.6.sh', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '葫芦娃[HP]4.6.sh');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.6.sh"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/葫芦娃[HP]4.6.sh" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.6.sh">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8007" name="file[]" value="WePE_64_V2.3.exe">
+                                <label class="custom-control-label" for="8007"></label>
+                            </div>
+                        </td>                    <td data-sort=WePE_64_V2.3.exe>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=WePE_64_V2.3.exe" title="WePE_64_V2.3.exe">
+                                                                        <i class="fa fa-file-o"></i> WePE_64_V2.3.exe                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000238591028"><span title="238591028 bytes">
+                            227.54 MB                        </span></td>
+                    <td data-order="b-1762431492">11/06/2025 8:18 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=WePE_64_V2.3.exe" onclick="confirmDailog(event, 1209, '删除 文件','WePE_64_V2.3.exe', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'WePE_64_V2.3.exe');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=WePE_64_V2.3.exe"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/WePE_64_V2.3.exe" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=WePE_64_V2.3.exe">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8008" name="file[]" value="Backups.zip">
+                                <label class="custom-control-label" for="8008"></label>
+                            </div>
+                        </td>                    <td data-sort=Backups.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Backups.zip" title="Backups.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> Backups.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000479437792"><span title="479437792 bytes">
+                            457.23 MB                        </span></td>
+                    <td data-order="b-1762417532">11/06/2025 4:25 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Backups.zip" onclick="confirmDailog(event, 1209, '删除 文件','Backups.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Backups.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Backups.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Backups.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Backups.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8009" name="file[]" value="驱动备份目录.zip">
+                                <label class="custom-control-label" for="8009"></label>
+                            </div>
+                        </td>                    <td data-sort=驱动备份目录.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E9%A9%B1%E5%8A%A8%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95.zip" title="驱动备份目录.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> 驱动备份目录.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000253035524"><span title="253035524 bytes">
+                            241.31 MB                        </span></td>
+                    <td data-order="b-1762416657">11/06/2025 4:10 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E9%A9%B1%E5%8A%A8%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95.zip" onclick="confirmDailog(event, 1209, '删除 文件','%E9%A9%B1%E5%8A%A8%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '驱动备份目录.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E9%A9%B1%E5%8A%A8%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/驱动备份目录.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E9%A9%B1%E5%8A%A8%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8010" name="file[]" value="7z2501-x64.exe">
+                                <label class="custom-control-label" for="8010"></label>
+                            </div>
+                        </td>                    <td data-sort=7z2501-x64.exe>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=7z2501-x64.exe" title="7z2501-x64.exe">
+                                                                        <i class="fa fa-file-o"></i> 7z2501-x64.exe                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000001643509"><span title="1643509 bytes">
+                            1.57 MB                        </span></td>
+                    <td data-order="b-1762416260">11/06/2025 4:04 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=7z2501-x64.exe" onclick="confirmDailog(event, 1209, '删除 文件','7z2501-x64.exe', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '7z2501-x64.exe');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=7z2501-x64.exe"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/7z2501-x64.exe" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=7z2501-x64.exe">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8011" name="file[]" value="DriverBooster_13.0.0.143_Portable.zip">
+                                <label class="custom-control-label" for="8011"></label>
+                            </div>
+                        </td>                    <td data-sort=DriverBooster_13.0.0.143_Portable.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=DriverBooster_13.0.0.143_Portable.zip" title="DriverBooster_13.0.0.143_Portable.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> DriverBooster_13.0.0.143_Portable.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000040470619"><span title="40470619 bytes">
+                            38.6 MB                        </span></td>
+                    <td data-order="b-1762413981">11/06/2025 3:26 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=DriverBooster_13.0.0.143_Portable.zip" onclick="confirmDailog(event, 1209, '删除 文件','DriverBooster_13.0.0.143_Portable.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'DriverBooster_13.0.0.143_Portable.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=DriverBooster_13.0.0.143_Portable.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/DriverBooster_13.0.0.143_Portable.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=DriverBooster_13.0.0.143_Portable.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8012" name="file[]" value="360驱动大师纯净版-2.0.0.2050--色单文件.exe">
+                                <label class="custom-control-label" for="8012"></label>
+                            </div>
+                        </td>                    <td data-sort=360驱动大师纯净版-2.0.0.2050--色单文件.exe>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=360%E9%A9%B1%E5%8A%A8%E5%A4%A7%E5%B8%88%E7%BA%AF%E5%87%80%E7%89%88-2.0.0.2050--%E8%89%B2%E5%8D%95%E6%96%87%E4%BB%B6.exe" title="360驱动大师纯净版-2.0.0.2050--色单文件.exe">
+                                                                        <i class="fa fa-file-o"></i> 360驱动大师纯净版-2.0.0.2050--色单文件.exe                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000009093563"><span title="9093563 bytes">
+                            8.67 MB                        </span></td>
+                    <td data-order="b-1762413920">11/06/2025 3:25 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=360%E9%A9%B1%E5%8A%A8%E5%A4%A7%E5%B8%88%E7%BA%AF%E5%87%80%E7%89%88-2.0.0.2050--%E8%89%B2%E5%8D%95%E6%96%87%E4%BB%B6.exe" onclick="confirmDailog(event, 1209, '删除 文件','360%E9%A9%B1%E5%8A%A8%E5%A4%A7%E5%B8%88%E7%BA%AF%E5%87%80%E7%89%88-2.0.0.2050--%E8%89%B2%E5%8D%95%E6%96%87%E4%BB%B6.exe', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '360驱动大师纯净版-2.0.0.2050--色单文件.exe');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=360%E9%A9%B1%E5%8A%A8%E5%A4%A7%E5%B8%88%E7%BA%AF%E5%87%80%E7%89%88-2.0.0.2050--%E8%89%B2%E5%8D%95%E6%96%87%E4%BB%B6.exe"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/360驱动大师纯净版-2.0.0.2050--色单文件.exe" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=360%E9%A9%B1%E5%8A%A8%E5%A4%A7%E5%B8%88%E7%BA%AF%E5%87%80%E7%89%88-2.0.0.2050--%E8%89%B2%E5%8D%95%E6%96%87%E4%BB%B6.exe">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8013" name="file[]" value="geek.exe">
+                                <label class="custom-control-label" for="8013"></label>
+                            </div>
+                        </td>                    <td data-sort=geek.exe>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=geek.exe" title="geek.exe">
+                                                                        <i class="fa fa-file-o"></i> geek.exe                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000007020016"><span title="7020016 bytes">
+                            6.69 MB                        </span></td>
+                    <td data-order="b-1762410945">11/06/2025 2:35 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=geek.exe" onclick="confirmDailog(event, 1209, '删除 文件','geek.exe', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'geek.exe');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=geek.exe"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/geek.exe" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=geek.exe">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8014" name="file[]" value="Hunter_6.46.apk">
+                                <label class="custom-control-label" for="8014"></label>
+                            </div>
+                        </td>                    <td data-sort=Hunter_6.46.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Hunter_6.46.apk" title="Hunter_6.46.apk">
+                                                                        <i class="fa fa-info-circle"></i> Hunter_6.46.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000016585898"><span title="16585898 bytes">
+                            15.82 MB                        </span></td>
+                    <td data-order="b-1762409531">11/06/2025 2:12 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Hunter_6.46.apk" onclick="confirmDailog(event, 1209, '删除 文件','Hunter_6.46.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Hunter_6.46.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Hunter_6.46.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Hunter_6.46.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Hunter_6.46.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8015" name="file[]" value="boot.img">
+                                <label class="custom-control-label" for="8015"></label>
+                            </div>
+                        </td>                    <td data-sort=boot.img>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=boot.img" title="boot.img">
+                                                                        <i class="fa fa-info-circle"></i> boot.img                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000134217728"><span title="134217728 bytes">
+                            128 MB                        </span></td>
+                    <td data-order="b-1762397343">11/06/2025 10:49 AM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=boot.img" onclick="confirmDailog(event, 1209, '删除 文件','boot.img', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'boot.img');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=boot.img"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/boot.img" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=boot.img">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8016" name="file[]" value="ASGuardUI.v1.6.5.202209041.apk">
+                                <label class="custom-control-label" for="8016"></label>
+                            </div>
+                        </td>                    <td data-sort=ASGuardUI.v1.6.5.202209041.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=ASGuardUI.v1.6.5.202209041.apk" title="ASGuardUI.v1.6.5.202209041.apk">
+                                                                        <i class="fa fa-info-circle"></i> ASGuardUI.v1.6.5.202209041.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000004132212"><span title="4132212 bytes">
+                            3.94 MB                        </span></td>
+                    <td data-order="b-1762353474">11/05/2025 10:37 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=ASGuardUI.v1.6.5.202209041.apk" onclick="confirmDailog(event, 1209, '删除 文件','ASGuardUI.v1.6.5.202209041.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'ASGuardUI.v1.6.5.202209041.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=ASGuardUI.v1.6.5.202209041.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/ASGuardUI.v1.6.5.202209041.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=ASGuardUI.v1.6.5.202209041.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8017" name="file[]" value="葫芦娃[HP]4.5.1.sh">
+                                <label class="custom-control-label" for="8017"></label>
+                            </div>
+                        </td>                    <td data-sort=葫芦娃[HP]4.5.1.sh>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.5.1.sh" title="葫芦娃[HP]4.5.1.sh">
+                                                                        <i class="fa fa-file-code-o"></i> 葫芦娃[HP]4.5.1.sh                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002527636"><span title="2527636 bytes">
+                            2.41 MB                        </span></td>
+                    <td data-order="b-1762350290">11/05/2025 9:44 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.5.1.sh" onclick="confirmDailog(event, 1209, '删除 文件','%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.5.1.sh', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '葫芦娃[HP]4.5.1.sh');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.5.1.sh"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/葫芦娃[HP]4.5.1.sh" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E8%91%AB%E8%8A%A6%E5%A8%83%5BHP%5D4.5.1.sh">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8018" name="file[]" value="橘子环境检测内测_sign.apk">
+                                <label class="custom-control-label" for="8018"></label>
+                            </div>
+                        </td>                    <td data-sort=橘子环境检测内测_sign.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E6%A9%98%E5%AD%90%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B%E5%86%85%E6%B5%8B_sign.apk" title="橘子环境检测内测_sign.apk">
+                                                                        <i class="fa fa-info-circle"></i> 橘子环境检测内测_sign.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000020989841"><span title="20989841 bytes">
+                            20.02 MB                        </span></td>
+                    <td data-order="b-1762350045">11/05/2025 9:40 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E6%A9%98%E5%AD%90%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B%E5%86%85%E6%B5%8B_sign.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E6%A9%98%E5%AD%90%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B%E5%86%85%E6%B5%8B_sign.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '橘子环境检测内测_sign.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E6%A9%98%E5%AD%90%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B%E5%86%85%E6%B5%8B_sign.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/橘子环境检测内测_sign.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E6%A9%98%E5%AD%90%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B%E5%86%85%E6%B5%8B_sign.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8019" name="file[]" value="『环境检测12件套』.zip">
+                                <label class="custom-control-label" for="8019"></label>
+                            </div>
+                        </td>                    <td data-sort=『环境检测12件套』.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E3%80%8E%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B12%E4%BB%B6%E5%A5%97%E3%80%8F.zip" title="『环境检测12件套』.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> 『环境检测12件套』.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000059302147"><span title="59302147 bytes">
+                            56.55 MB                        </span></td>
+                    <td data-order="b-1762349639">11/05/2025 9:33 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E3%80%8E%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B12%E4%BB%B6%E5%A5%97%E3%80%8F.zip" onclick="confirmDailog(event, 1209, '删除 文件','%E3%80%8E%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B12%E4%BB%B6%E5%A5%97%E3%80%8F.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '『环境检测12件套』.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E3%80%8E%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B12%E4%BB%B6%E5%A5%97%E3%80%8F.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/『环境检测12件套』.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E3%80%8E%E7%8E%AF%E5%A2%83%E6%A3%80%E6%B5%8B12%E4%BB%B6%E5%A5%97%E3%80%8F.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8020" name="file[]" value="clash-meta-arm64-v8a-release.apk">
+                                <label class="custom-control-label" for="8020"></label>
+                            </div>
+                        </td>                    <td data-sort=clash-meta-arm64-v8a-release.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=clash-meta-arm64-v8a-release.apk" title="clash-meta-arm64-v8a-release.apk">
+                                                                        <i class="fa fa-info-circle"></i> clash-meta-arm64-v8a-release.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000023407685"><span title="23407685 bytes">
+                            22.32 MB                        </span></td>
+                    <td data-order="b-1762317004">11/05/2025 12:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=clash-meta-arm64-v8a-release.apk" onclick="confirmDailog(event, 1209, '删除 文件','clash-meta-arm64-v8a-release.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'clash-meta-arm64-v8a-release.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=clash-meta-arm64-v8a-release.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/clash-meta-arm64-v8a-release.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=clash-meta-arm64-v8a-release.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8021" name="file[]" value="Guise1.1.2-fix.apk">
+                                <label class="custom-control-label" for="8021"></label>
+                            </div>
+                        </td>                    <td data-sort=Guise1.1.2-fix.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Guise1.1.2-fix.apk" title="Guise1.1.2-fix.apk">
+                                                                        <i class="fa fa-info-circle"></i> Guise1.1.2-fix.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000004675338"><span title="4675338 bytes">
+                            4.46 MB                        </span></td>
+                    <td data-order="b-1762232289">11/04/2025 12:58 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Guise1.1.2-fix.apk" onclick="confirmDailog(event, 1209, '删除 文件','Guise1.1.2-fix.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Guise1.1.2-fix.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Guise1.1.2-fix.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Guise1.1.2-fix.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Guise1.1.2-fix.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8022" name="file[]" value="moss.mp3">
+                                <label class="custom-control-label" for="8022"></label>
+                            </div>
+                        </td>                    <td data-sort=moss.mp3>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=moss.mp3" title="moss.mp3">
+                                                                        <i class="fa fa-music"></i> moss.mp3                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000001831472"><span title="1831472 bytes">
+                            1.75 MB                        </span></td>
+                    <td data-order="b-1761835546">10/30/2025 10:45 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=moss.mp3" onclick="confirmDailog(event, 1209, '删除 文件','moss.mp3', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'moss.mp3');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=moss.mp3"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/moss.mp3" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=moss.mp3">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8023" name="file[]" value="HMCL-3.6.20.exe">
+                                <label class="custom-control-label" for="8023"></label>
+                            </div>
+                        </td>                    <td data-sort=HMCL-3.6.20.exe>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=HMCL-3.6.20.exe" title="HMCL-3.6.20.exe">
+                                                                        <i class="fa fa-file-o"></i> HMCL-3.6.20.exe                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000007805501"><span title="7805501 bytes">
+                            7.44 MB                        </span></td>
+                    <td data-order="b-1761570263">10/27/2025 9:04 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=HMCL-3.6.20.exe" onclick="confirmDailog(event, 1209, '删除 文件','HMCL-3.6.20.exe', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'HMCL-3.6.20.exe');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=HMCL-3.6.20.exe"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/HMCL-3.6.20.exe" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=HMCL-3.6.20.exe">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8024" name="file[]" value="FlatPress无数据库博客.zip">
+                                <label class="custom-control-label" for="8024"></label>
+                            </div>
+                        </td>                    <td data-sort=FlatPress无数据库博客.zip>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=FlatPress%E6%97%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%9A%E5%AE%A2.zip" title="FlatPress无数据库博客.zip">
+                                                                        <i class="fa fa-file-archive-o"></i> FlatPress无数据库博客.zip                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000004549605"><span title="4549605 bytes">
+                            4.34 MB                        </span></td>
+                    <td data-order="b-1759725281">10/06/2025 12:34 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=FlatPress%E6%97%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%9A%E5%AE%A2.zip" onclick="confirmDailog(event, 1209, '删除 文件','FlatPress%E6%97%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%9A%E5%AE%A2.zip', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'FlatPress无数据库博客.zip');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=FlatPress%E6%97%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%9A%E5%AE%A2.zip"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/FlatPress无数据库博客.zip" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=FlatPress%E6%97%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%9A%E5%AE%A2.zip">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8025" name="file[]" value="R-安装组件_2.6.11-beta.apk">
+                                <label class="custom-control-label" for="8025"></label>
+                            </div>
+                        </td>                    <td data-sort=R-安装组件_2.6.11-beta.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=R-%E5%AE%89%E8%A3%85%E7%BB%84%E4%BB%B6_2.6.11-beta.apk" title="R-安装组件_2.6.11-beta.apk">
+                                                                        <i class="fa fa-info-circle"></i> R-安装组件_2.6.11-beta.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002630736"><span title="2630736 bytes">
+                            2.51 MB                        </span></td>
+                    <td data-order="b-1757948904">09/15/2025 11:08 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=R-%E5%AE%89%E8%A3%85%E7%BB%84%E4%BB%B6_2.6.11-beta.apk" onclick="confirmDailog(event, 1209, '删除 文件','R-%E5%AE%89%E8%A3%85%E7%BB%84%E4%BB%B6_2.6.11-beta.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'R-安装组件_2.6.11-beta.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=R-%E5%AE%89%E8%A3%85%E7%BB%84%E4%BB%B6_2.6.11-beta.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/R-安装组件_2.6.11-beta.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=R-%E5%AE%89%E8%A3%85%E7%BB%84%E4%BB%B6_2.6.11-beta.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8026" name="file[]" value="9476e728-alpha-30200.apk">
+                                <label class="custom-control-label" for="8026"></label>
+                            </div>
+                        </td>                    <td data-sort=9476e728-alpha-30200.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=9476e728-alpha-30200.apk" title="9476e728-alpha-30200.apk">
+                                                                        <i class="fa fa-info-circle"></i> 9476e728-alpha-30200.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000012330874"><span title="12330874 bytes">
+                            11.76 MB                        </span></td>
+                    <td data-order="b-1757946584">09/15/2025 10:29 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=9476e728-alpha-30200.apk" onclick="confirmDailog(event, 1209, '删除 文件','9476e728-alpha-30200.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '9476e728-alpha-30200.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=9476e728-alpha-30200.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/9476e728-alpha-30200.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=9476e728-alpha-30200.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8027" name="file[]" value="Ruru_1.1.1.apk">
+                                <label class="custom-control-label" for="8027"></label>
+                            </div>
+                        </td>                    <td data-sort=Ruru_1.1.1.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Ruru_1.1.1.apk" title="Ruru_1.1.1.apk">
+                                                                        <i class="fa fa-info-circle"></i> Ruru_1.1.1.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002740592"><span title="2740592 bytes">
+                            2.61 MB                        </span></td>
+                    <td data-order="b-1757943079">09/15/2025 9:31 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Ruru_1.1.1.apk" onclick="confirmDailog(event, 1209, '删除 文件','Ruru_1.1.1.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Ruru_1.1.1.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Ruru_1.1.1.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Ruru_1.1.1.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Ruru_1.1.1.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8028" name="file[]" value="Scene4_4.7.3.apk">
+                                <label class="custom-control-label" for="8028"></label>
+                            </div>
+                        </td>                    <td data-sort=Scene4_4.7.3.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Scene4_4.7.3.apk" title="Scene4_4.7.3.apk">
+                                                                        <i class="fa fa-info-circle"></i> Scene4_4.7.3.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000004790372"><span title="4790372 bytes">
+                            4.57 MB                        </span></td>
+                    <td data-order="b-1757943064">09/15/2025 9:31 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Scene4_4.7.3.apk" onclick="confirmDailog(event, 1209, '删除 文件','Scene4_4.7.3.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Scene4_4.7.3.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Scene4_4.7.3.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Scene4_4.7.3.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Scene4_4.7.3.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8029" name="file[]" value="Luna_1.3.0.4.apk">
+                                <label class="custom-control-label" for="8029"></label>
+                            </div>
+                        </td>                    <td data-sort=Luna_1.3.0.4.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Luna_1.3.0.4.apk" title="Luna_1.3.0.4.apk">
+                                                                        <i class="fa fa-info-circle"></i> Luna_1.3.0.4.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002107190"><span title="2107190 bytes">
+                            2.01 MB                        </span></td>
+                    <td data-order="b-1757943062">09/15/2025 9:31 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Luna_1.3.0.4.apk" onclick="confirmDailog(event, 1209, '删除 文件','Luna_1.3.0.4.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Luna_1.3.0.4.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Luna_1.3.0.4.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Luna_1.3.0.4.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Luna_1.3.0.4.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8030" name="file[]" value="FuckMiMarket_1.0.apk">
+                                <label class="custom-control-label" for="8030"></label>
+                            </div>
+                        </td>                    <td data-sort=FuckMiMarket_1.0.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=FuckMiMarket_1.0.apk" title="FuckMiMarket_1.0.apk">
+                                                                        <i class="fa fa-info-circle"></i> FuckMiMarket_1.0.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000000051285"><span title="51285 bytes">
+                            50.08 KB                        </span></td>
+                    <td data-order="b-1757943048">09/15/2025 9:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=FuckMiMarket_1.0.apk" onclick="confirmDailog(event, 1209, '删除 文件','FuckMiMarket_1.0.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'FuckMiMarket_1.0.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=FuckMiMarket_1.0.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/FuckMiMarket_1.0.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=FuckMiMarket_1.0.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8031" name="file[]" value="Applist Detector_2.4.apk">
+                                <label class="custom-control-label" for="8031"></label>
+                            </div>
+                        </td>                    <td data-sort=Applist Detector_2.4.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Applist+Detector_2.4.apk" title="Applist Detector_2.4.apk">
+                                                                        <i class="fa fa-info-circle"></i> Applist Detector_2.4.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000002775365"><span title="2775365 bytes">
+                            2.65 MB                        </span></td>
+                    <td data-order="b-1757943044">09/15/2025 9:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Applist+Detector_2.4.apk" onclick="confirmDailog(event, 1209, '删除 文件','Applist+Detector_2.4.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Applist Detector_2.4.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Applist+Detector_2.4.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Applist Detector_2.4.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Applist+Detector_2.4.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8032" name="file[]" value="隐藏BL列表_1.5.apk">
+                                <label class="custom-control-label" for="8032"></label>
+                            </div>
+                        </td>                    <td data-sort=隐藏BL列表_1.5.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E9%9A%90%E8%97%8FBL%E5%88%97%E8%A1%A8_1.5.apk" title="隐藏BL列表_1.5.apk">
+                                                                        <i class="fa fa-info-circle"></i> 隐藏BL列表_1.5.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000003411300"><span title="3411300 bytes">
+                            3.25 MB                        </span></td>
+                    <td data-order="b-1757943043">09/15/2025 9:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E9%9A%90%E8%97%8FBL%E5%88%97%E8%A1%A8_1.5.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E9%9A%90%E8%97%8FBL%E5%88%97%E8%A1%A8_1.5.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '隐藏BL列表_1.5.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E9%9A%90%E8%97%8FBL%E5%88%97%E8%A1%A8_1.5.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/隐藏BL列表_1.5.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E9%9A%90%E8%97%8FBL%E5%88%97%E8%A1%A8_1.5.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8033" name="file[]" value="隐藏应用列表_3.5.r449.1d951a3.apk">
+                                <label class="custom-control-label" for="8033"></label>
+                            </div>
+                        </td>                    <td data-sort=隐藏应用列表_3.5.r449.1d951a3.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E9%9A%90%E8%97%8F%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8_3.5.r449.1d951a3.apk" title="隐藏应用列表_3.5.r449.1d951a3.apk">
+                                                                        <i class="fa fa-info-circle"></i> 隐藏应用列表_3.5.r449.1d951a3.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000003278083"><span title="3278083 bytes">
+                            3.13 MB                        </span></td>
+                    <td data-order="b-1757943042">09/15/2025 9:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E9%9A%90%E8%97%8F%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8_3.5.r449.1d951a3.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E9%9A%90%E8%97%8F%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8_3.5.r449.1d951a3.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '隐藏应用列表_3.5.r449.1d951a3.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E9%9A%90%E8%97%8F%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8_3.5.r449.1d951a3.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/隐藏应用列表_3.5.r449.1d951a3.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E9%9A%90%E8%97%8F%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8_3.5.r449.1d951a3.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8034" name="file[]" value="淘米水_1.7.6.apk">
+                                <label class="custom-control-label" for="8034"></label>
+                            </div>
+                        </td>                    <td data-sort=淘米水_1.7.6.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E6%B7%98%E7%B1%B3%E6%B0%B4_1.7.6.apk" title="淘米水_1.7.6.apk">
+                                                                        <i class="fa fa-info-circle"></i> 淘米水_1.7.6.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000001292675"><span title="1292675 bytes">
+                            1.23 MB                        </span></td>
+                    <td data-order="b-1757943041">09/15/2025 9:30 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E6%B7%98%E7%B1%B3%E6%B0%B4_1.7.6.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E6%B7%98%E7%B1%B3%E6%B0%B4_1.7.6.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '淘米水_1.7.6.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E6%B7%98%E7%B1%B3%E6%B0%B4_1.7.6.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/淘米水_1.7.6.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E6%B7%98%E7%B1%B3%E6%B0%B4_1.7.6.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8035" name="file[]" value="核心破解_4.2.apk">
+                                <label class="custom-control-label" for="8035"></label>
+                            </div>
+                        </td>                    <td data-sort=核心破解_4.2.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E6%A0%B8%E5%BF%83%E7%A0%B4%E8%A7%A3_4.2.apk" title="核心破解_4.2.apk">
+                                                                        <i class="fa fa-info-circle"></i> 核心破解_4.2.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000000038379"><span title="38379 bytes">
+                            37.48 KB                        </span></td>
+                    <td data-order="b-1757942994">09/15/2025 9:29 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E6%A0%B8%E5%BF%83%E7%A0%B4%E8%A7%A3_4.2.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E6%A0%B8%E5%BF%83%E7%A0%B4%E8%A7%A3_4.2.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '核心破解_4.2.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E6%A0%B8%E5%BF%83%E7%A0%B4%E8%A7%A3_4.2.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/核心破解_4.2.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E6%A0%B8%E5%BF%83%E7%A0%B4%E8%A7%A3_4.2.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8036" name="file[]" value="超级用户列表_1.0.apk">
+                                <label class="custom-control-label" for="8036"></label>
+                            </div>
+                        </td>                    <td data-sort=超级用户列表_1.0.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E8%B6%85%E7%BA%A7%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8_1.0.apk" title="超级用户列表_1.0.apk">
+                                                                        <i class="fa fa-info-circle"></i> 超级用户列表_1.0.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000001535450"><span title="1535450 bytes">
+                            1.46 MB                        </span></td>
+                    <td data-order="b-1757942912">09/15/2025 9:28 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E8%B6%85%E7%BA%A7%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8_1.0.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E8%B6%85%E7%BA%A7%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8_1.0.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '超级用户列表_1.0.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E8%B6%85%E7%BA%A7%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8_1.0.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/超级用户列表_1.0.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E8%B6%85%E7%BA%A7%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8_1.0.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8037" name="file[]" value="爱玩机工具箱_S-22.0.9.8.apk">
+                                <label class="custom-control-label" for="8037"></label>
+                            </div>
+                        </td>                    <td data-sort=爱玩机工具箱_S-22.0.9.8.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=%E7%88%B1%E7%8E%A9%E6%9C%BA%E5%B7%A5%E5%85%B7%E7%AE%B1_S-22.0.9.8.apk" title="爱玩机工具箱_S-22.0.9.8.apk">
+                                                                        <i class="fa fa-info-circle"></i> 爱玩机工具箱_S-22.0.9.8.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000010262494"><span title="10262494 bytes">
+                            9.79 MB                        </span></td>
+                    <td data-order="b-1757942858">09/15/2025 9:27 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=%E7%88%B1%E7%8E%A9%E6%9C%BA%E5%B7%A5%E5%85%B7%E7%AE%B1_S-22.0.9.8.apk" onclick="confirmDailog(event, 1209, '删除 文件','%E7%88%B1%E7%8E%A9%E6%9C%BA%E5%B7%A5%E5%85%B7%E7%AE%B1_S-22.0.9.8.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', '爱玩机工具箱_S-22.0.9.8.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=%E7%88%B1%E7%8E%A9%E6%9C%BA%E5%B7%A5%E5%85%B7%E7%AE%B1_S-22.0.9.8.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/爱玩机工具箱_S-22.0.9.8.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=%E7%88%B1%E7%8E%A9%E6%9C%BA%E5%B7%A5%E5%85%B7%E7%AE%B1_S-22.0.9.8.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8038" name="file[]" value="Momo_4.4.1.apk">
+                                <label class="custom-control-label" for="8038"></label>
+                            </div>
+                        </td>                    <td data-sort=Momo_4.4.1.apk>
+                        <div class="filename">
+                                                                <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Momo_4.4.1.apk" title="Momo_4.4.1.apk">
+                                                                        <i class="fa fa-info-circle"></i> Momo_4.4.1.apk                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000001973023"><span title="1973023 bytes">
+                            1.88 MB                        </span></td>
+                    <td data-order="b-1757942835">09/15/2025 9:27 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Momo_4.4.1.apk" onclick="confirmDailog(event, 1209, '删除 文件','Momo_4.4.1.apk', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Momo_4.4.1.apk');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Momo_4.4.1.apk"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Momo_4.4.1.apk" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Momo_4.4.1.apk">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tr>
+                                            <td class="custom-checkbox-td">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="8039" name="file[]" value="Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg">
+                                <label class="custom-control-label" for="8039"></label>
+                            </div>
+                        </td>                    <td data-sort=Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg>
+                        <div class="filename">
+                                                                                            <a href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;view=Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg" data-preview-image="http://10.0.0.1:8080/FileShare/file/Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg" title="Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg">
+                                                                    <i class="fa fa-picture-o"></i> Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg                                    </a>
+                                                            </div>
+                    </td>
+                    <td data-order="b-000000000000633957"><span title="633957 bytes">
+                            619.1 KB                        </span></td>
+                    <td data-order="b-1757941971">09/15/2025 9:12 PM</td>
+                                        <td class="inline-actions">
+                                                    <a title="删除" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;del=Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg" onclick="confirmDailog(event, 1209, '删除 文件','Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg', this.href);"> <i class="fa fa-trash-o"></i></a>
+                            <a title="重命名" href="FileShare.html#" onclick="rename('', 'Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg');return false;"><i class="fa fa-pencil-square-o"></i></a>
+                            <a title="复制到..."
+                                href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;copy=Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg"><i class="fa fa-files-o"></i></a>
+                                                <a title="直链" href="http://10.0.0.1:8080/FileShare/file/Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg" target="_blank"><i class="fa fa-link"></i>
+                        </a>
+                        
+                        <a title="下载" href="http://10.0.0.1:8080/FileShare/index.php?p=&amp;dl=Screenshot_2025-09-15-21-00-54-457_com.tencent.tmgp.pubgmhd.jpg">
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </td>
+                </tr>
+                            <tfoot>
+                    <tr>
+                        <td class="gray fs-7" colspan="5">
+                            所有文件大小: <span class="badge text-bg-light border-radius-0">1.52 GB</span>                            文件: <span class="badge text-bg-light border-radius-0">38</span>                            文件夹: <span class="badge text-bg-light border-radius-0">1</span>                        </td>
+                    </tr>
+                </tfoot>
+                    </table>
+    </div>
+
+    <div class="row">
+                    <div class="col-xs-12 col-sm-9">
+                <div class="btn-group flex-wrap" data-toggle="buttons" role="toolbar">
+                    <a href="FileShare.html#/select-all" class="btn btn-small btn-outline-primary btn-2" onclick="select_all();return false;"><i class="fa fa-check-square"></i> 全选 </a>
+                    <a href="FileShare.html#/unselect-all" class="btn btn-small btn-outline-primary btn-2" onclick="unselect_all();return false;"><i class="fa fa-window-close"></i> 取消全选 </a>
+                    <a href="FileShare.html#/invert-all" class="btn btn-small btn-outline-primary btn-2" onclick="invert_all();return false;"><i class="fa fa-th-list"></i> 反向选择 </a>
+                    <input type="submit" class="hidden" name="delete" id="a-delete" value="Delete" onclick="return confirm('是否删除选定的文件和文件夹？')">
+                    <a href="javascript:document.getElementById('a-delete').click();" class="btn btn-small btn-outline-primary btn-2"><i class="fa fa-trash"></i> 删除 </a>
+                    <input type="submit" class="hidden" name="zip" id="a-zip" value="zip" onclick="return confirm('创建存档？')">
+                    <a href="javascript:document.getElementById('a-zip').click();" class="btn btn-small btn-outline-primary btn-2"><i class="fa fa-file-archive-o"></i> Zip </a>
+                    <input type="submit" class="hidden" name="tar" id="a-tar" value="tar" onclick="return confirm('创建存档？')">
+                    <a href="javascript:document.getElementById('a-tar').click();" class="btn btn-small btn-outline-primary btn-2"><i class="fa fa-file-archive-o"></i> Tar </a>
+                    <input type="submit" class="hidden" name="copy" id="a-copy" value="Copy">
+                    <a href="javascript:document.getElementById('a-copy').click();" class="btn btn-small btn-outline-primary btn-2"><i class="fa fa-files-o"></i> 复制 </a>
+                </div>
+            </div>
+            <div class="col-3 d-none d-sm-block"><a href="https://tinyfilemanager.github.io" target="_blank" class="float-right text-muted">Tiny File Manager 2.6</a></div>
+            </div>
+</form>
+
+        </div>
+        <script src="http://10.0.0.1:8080/FileShare/cssjs/jquery-3.6.1.min.js"></script>        <script src="http://10.0.0.1:8080/FileShare/cssjs/bootstrap.bundle.min.js"></script>        <script src="http://10.0.0.1:8080/FileShare/cssjs/jquery.dataTables.min.js"></script>                <script>
+            function template(html, options) {
+                var re = /<\%([^\%>]+)?\%>/g,
+                    reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+                    code = 'var r=[];\n',
+                    cursor = 0,
+                    match;
+                var add = function(line, js) {
+                    js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') : (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+                    return add
+                }
+                while (match = re.exec(html)) {
+                    add(html.slice(cursor, match.index))(match[1], !0);
+                    cursor = match.index + match[0].length
+                }
+                add(html.substr(cursor, html.length - cursor));
+                code += 'return r.join("");';
+                return new Function(code.replace(/[\r\t\n]/g, '')).apply(options)
+            }
+
+            function rename(e, t) {
+                if (t) {
+                    $("#js-rename-from").val(t);
+                    $("#js-rename-to").val(t);
+                    $("#renameDailog").modal('show');
+                }
+            }
+
+            function change_checkboxes(e, t) {
+                for (var n = e.length - 1; n >= 0; n--) e[n].checked = "boolean" == typeof t ? t : !e[n].checked
+            }
+
+            function get_checkboxes() {
+                for (var e = document.getElementsByName("file[]"), t = [], n = e.length - 1; n >= 0; n--)(e[n].type = "checkbox") && t.push(e[n]);
+                return t
+            }
+
+            function select_all() {
+                change_checkboxes(get_checkboxes(), !0)
+            }
+
+            function unselect_all() {
+                change_checkboxes(get_checkboxes(), !1)
+            }
+
+            function invert_all() {
+                change_checkboxes(get_checkboxes())
+            }
+
+            function checkbox_toggle() {
+                var e = get_checkboxes();
+                e.push(this), change_checkboxes(e)
+            }
+
+            // Create file backup with .bck
+            function backup(e, t) {
+                var n = new XMLHttpRequest,
+                    a = "path=" + e + "&file=" + t + "&token=" + window.csrf + "&type=backup&ajax=true";
+                return n.open("POST", "", !0), n.setRequestHeader("Content-type", "application/x-www-form-urlencoded"), n.onreadystatechange = function() {
+                    4 == n.readyState && 200 == n.status && toast(n.responseText)
+                }, n.send(a), !1
+            }
+
+            // Toast message
+            function toast(txt) {
+                var x = document.getElementById("snackbar");
+                x.innerHTML = txt;
+                x.className = "show";
+                setTimeout(function() {
+                    x.className = x.className.replace("show", "");
+                }, 3000);
+            }
+
+            // Save file
+            function edit_save(e, t) {
+                var n = "ace" == t ? editor.getSession().getValue() : document.getElementById("normal-editor").value;
+                if (typeof n !== 'undefined' && n !== null) {
+                    if (true) {
+                        var data = {
+                            ajax: true,
+                            content: n,
+                            type: 'save',
+                            token: window.csrf
+                        };
+
+                        $.ajax({
+                            type: "POST",
+                            url: window.location,
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            success: function(mes) {
+                                toast("Saved Successfully");
+                                window.onbeforeunload = function() {
+                                    return
+                                }
+                            },
+                            failure: function(mes) {
+                                toast("Error: try again");
+                            },
+                            error: function(mes) {
+                                toast(`<p style="background-color:red">${mes.responseText}</p>`);
+                            }
+                        });
+                    } else {
+                        var a = document.createElement("form");
+                        a.setAttribute("method", "POST"), a.setAttribute("action", "");
+                        var o = document.createElement("textarea");
+                        o.setAttribute("type", "textarea"), o.setAttribute("name", "savedata");
+                        let cx = document.createElement("input");
+                        cx.setAttribute("type", "hidden");
+                        cx.setAttribute("name", "token");
+                        cx.setAttribute("value", window.csrf);
+                        var c = document.createTextNode(n);
+                        o.appendChild(c), a.appendChild(o), a.appendChild(cx), document.body.appendChild(a), a.submit()
+                    }
+                }
+            }
+
+            function show_new_pwd() {
+                $(".js-new-pwd").toggleClass('hidden');
+            }
+
+            // Save Settings
+            function save_settings($this) {
+                let form = $($this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize() + "&token=" + window.csrf + "&ajax=" + true,
+                    success: function(data) {
+                        if (data) {
+                            window.location.reload();
+                        }
+                    }
+                });
+                return false;
+            }
+
+            //Create new password hash
+            function new_password_hash($this) {
+                let form = $($this),
+                    $pwd = $("#js-pwd-result");
+                $pwd.val('');
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize() + "&token=" + window.csrf + "&ajax=" + true,
+                    success: function(data) {
+                        if (data) {
+                            $pwd.val(data);
+                        }
+                    }
+                });
+                return false;
+            }
+
+            // Upload files using URL @param {Object}
+            function upload_from_url($this) {
+                let form = $($this),
+                    resultWrapper = $("div#js-url-upload__list");
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize() + "&token=" + window.csrf + "&ajax=" + true,
+                    beforeSend: function() {
+                        form.find("input[name=uploadurl]").attr("disabled", "disabled");
+                        form.find("button").hide();
+                        form.find(".lds-facebook").addClass('show-me');
+                    },
+                    success: function(data) {
+                        if (data) {
+                            data = JSON.parse(data);
+                            if (data.done) {
+                                resultWrapper.append('<div class="alert alert-success row">Uploaded Successful: ' + data.done.name + '</div>');
+                                form.find("input[name=uploadurl]").val('');
+                            } else if (data['fail']) {
+                                resultWrapper.append('<div class="alert alert-danger row">Error: ' + data.fail.message + '</div>');
+                            }
+                            form.find("input[name=uploadurl]").removeAttr("disabled");
+                            form.find("button").show();
+                            form.find(".lds-facebook").removeClass('show-me');
+                        }
+                    },
+                    error: function(xhr) {
+                        form.find("input[name=uploadurl]").removeAttr("disabled");
+                        form.find("button").show();
+                        form.find(".lds-facebook").removeClass('show-me');
+                        console.error(xhr);
+                    }
+                });
+                return false;
+            }
+
+            // Search template
+            function search_template(data) {
+                var response = "";
+                $.each(data, function(key, val) {
+                    response += `<li><a href="http://10.0.0.1:8080/FileShare/index.php?p=${val.path}&amp;view=${val.name}">${val.path}/${val.name}</a></li>`;
+                });
+                return response;
+            }
+
+            // Advance search
+            function fm_search() {
+                var searchTxt = $("input#advanced-search").val(),
+                    searchWrapper = $("ul#search-wrapper"),
+                    path = $("#js-search-modal").attr("href"),
+                    _html = "",
+                    $loader = $("div.lds-facebook");
+                if (!!searchTxt && searchTxt.length > 2 && path) {
+                    var data = {
+                        ajax: true,
+                        content: searchTxt,
+                        path: path,
+                        type: 'search',
+                        token: window.csrf
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: window.location,
+                        data: data,
+                        beforeSend: function() {
+                            searchWrapper.html('');
+                            $loader.addClass('show-me');
+                        },
+                        success: function(data) {
+                            $loader.removeClass('show-me');
+                            data = JSON.parse(data);
+                            if (data && data.length) {
+                                _html = search_template(data);
+                                searchWrapper.html(_html);
+                            } else {
+                                searchWrapper.html('<p class="m-2">No result found!<p>');
+                            }
+                        },
+                        error: function(xhr) {
+                            $loader.removeClass('show-me');
+                            searchWrapper.html('<p class="m-2">ERROR: Try again later!</p>');
+                        },
+                        failure: function(mes) {
+                            $loader.removeClass('show-me');
+                            searchWrapper.html('<p class="m-2">ERROR: Try again later!</p>');
+                        }
+                    });
+                } else {
+                    searchWrapper.html("OOPS: minimum 3 characters required!");
+                }
+            }
+
+            // action confirm dailog modal
+            function confirmDailog(e, id = 0, title = "Action", content = "", action = null) {
+                e.preventDefault();
+                const tplObj = {
+                    id,
+                    title,
+                    content: decodeURIComponent(content.replace(/\+/g, ' ')),
+                    action
+                };
+                let tpl = $("#js-tpl-confirm").html();
+                $(".modal.confirmDailog").remove();
+                $('#wrapper').append(template(tpl, tplObj));
+                const $confirmDailog = $("#confirmDailog-" + tplObj.id);
+                $confirmDailog.modal('show');
+                return false;
+            }
+
+            // on mouse hover image preview
+            ! function(s) {
+                s.previewImage = function(e) {
+                    var o = s(document),
+                        t = ".previewImage",
+                        a = s.extend({
+                            xOffset: 20,
+                            yOffset: -20,
+                            fadeIn: "fast",
+                            css: {
+                                padding: "5px",
+                                border: "1px solid #cccccc",
+                                "background-color": "#fff"
+                            },
+                            eventSelector: "[data-preview-image]",
+                            dataKey: "previewImage",
+                            overlayId: "preview-image-plugin-overlay"
+                        }, e);
+                    return o.off(t), o.on("mouseover" + t, a.eventSelector, function(e) {
+                        s("p#" + a.overlayId).remove();
+                        var o = s("<p>").attr("id", a.overlayId).css("position", "absolute").css("display", "none").append(s('<img class="c-preview-img">').attr("src", s(this).data(a.dataKey)));
+                        a.css && o.css(a.css), s("body").append(o), o.css("top", e.pageY + a.yOffset + "px").css("left", e.pageX + a.xOffset + "px").fadeIn(a.fadeIn)
+                    }), o.on("mouseout" + t, a.eventSelector, function() {
+                        s("#" + a.overlayId).remove()
+                    }), o.on("mousemove" + t, a.eventSelector, function(e) {
+                        s("#" + a.overlayId).css("top", e.pageY + a.yOffset + "px").css("left", e.pageX + a.xOffset + "px")
+                    }), this
+                }, s.previewImage()
+            }(jQuery);
+
+            // Dom Ready Events
+            $(document).ready(function() {
+                // dataTable init
+                var $table = $('#main-table'),
+                    tableLng = $table.find('th').length,
+                    _targets = (tableLng && tableLng == 7) ? [0, 4, 5, 6] : tableLng == 5 ? [0, 4] : [3];
+                mainTable = $('#main-table').DataTable({
+                    paging: false,
+                    info: false,
+                    order: [],
+                    columnDefs: [{
+                        targets: _targets,
+                        orderable: false
+                    }]
+                });
+
+                // filter table
+                $('#search-addon').on('keyup', function() {
+                    mainTable.search(this.value).draw();
+                });
+
+                $("input#advanced-search").on('keyup', function(e) {
+                    if (e.keyCode === 13) {
+                        fm_search();
+                    }
+                });
+
+                $('#search-addon3').on('click', function() {
+                    fm_search();
+                });
+
+                //upload nav tabs
+                $(".fm-upload-wrapper .card-header-tabs").on("click", 'a', function(e) {
+                    e.preventDefault();
+                    let target = $(this).data('target');
+                    $(".fm-upload-wrapper .card-header-tabs a").removeClass('active');
+                    $(this).addClass('active');
+                    $(".fm-upload-wrapper .card-tabs-container").addClass('hidden');
+                    $(target).removeClass('hidden');
+                });
+            });
+        </script>
+
+                <div id="snackbar"></div>
+    </body>
+
+    </html>
